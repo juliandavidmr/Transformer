@@ -30,8 +30,19 @@ $app->get('/{port:[0-9]+}/{server:[0-9]+}[/{url}]', function (Request $request, 
         return $response->write("Identificador del servidor desconocido");
     }
     $ipOrigin = $settings['settings']['servers'][$server];
+    $port = ":" + ((int)$port) > 0 ? "$port" : "";
 
-    $res = Requests::get("$ipOrigin:$port");
+    $source_url = "$ipOrigin$port";
 
-    return $response->write("Puerto " . $port . " IP:" . $ipOrigin);
+    // Request
+    /*$headers = array();
+    if (is_array($request->getHeaders())) {
+        foreach ( ((array)$request->getHeaders()) as $key => $value) {
+            $headers[$key] = $value;
+        }
+    }*/
+    $headers = array('Content-Type' => 'application/json');
+    $res = Requests::get($source_url, $headers/* , $request->getHeaders() */ );
+
+    return $response->write("Direccion: $ipOrigin$port");
 });
