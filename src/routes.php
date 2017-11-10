@@ -21,7 +21,7 @@ $app->get('/{port:[0-9]+}/{server:[0-9]+}[/{url}]', function (Request $request, 
     if (array_key_exists('url', $args)) {
         $url = $args['url'];
     } else {
-        $url = '/';
+        $url = '';
     }
 
     // Settings
@@ -32,17 +32,9 @@ $app->get('/{port:[0-9]+}/{server:[0-9]+}[/{url}]', function (Request $request, 
     $ipOrigin = $settings['settings']['servers'][$server];
     $port = ":" + ((int)$port) > 0 ? "$port" : "";
 
-    $source_url = "$ipOrigin$port";
+    $source_url = "$ipOrigin$port/$url";
 
-    // Request
-    /*$headers = array();
-    if (is_array($request->getHeaders())) {
-        foreach ( ((array)$request->getHeaders()) as $key => $value) {
-            $headers[$key] = $value;
-        }
-    }*/
-    $headers = array('Content-Type' => 'application/json');
-    $res = Requests::get($source_url, $headers/* , $request->getHeaders() */ );
+    $res = Requests::get($source_url, array());
 
-    return $response->write("Direccion: $ipOrigin$port");
+    return $response->write($res->body);
 });
